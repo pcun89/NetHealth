@@ -10,17 +10,12 @@ from snmp_client import get_interfaces_bytes
 from metrics import computeBandwidth
 from database import addMetrics
 from alert_manager import pushAlert
+from app import pushRealtimeUpdate
 
 devices = ["192.168.1.1", "192.168.1.2"]
 
 
 def pollDevice(device):
-    """
-    Polls a device.
-
-    Time Complexity: O(n interfaces)
-    Data Structure: Dictionary
-    """
     prev = get_interfaces_bytes()
 
     while True:
@@ -29,11 +24,21 @@ def pollDevice(device):
 
         bandwidth = computeBandwidth(prev, curr, 5)
 
+        payload = []
+
         for ifIndex, (inRate, outRate) in bandwidth.items():
             addMetrics(device, int(time.time()), ifIndex, inRate, outRate)
 
-            if inRate > 80000:
-                pushAlert("HIGH", f"{device} high inbound traffic")
+            payload.append({
+                "host": device,
+                "ifIndex": ifIndex,
+                "inBytes": inRate,
+                "outBytes": outRate,
+                "ts": int(time.time())
+            })
+
+        # 🔥 REAL-TIME PUSH
+        pushRealtimeUpdate(payload)
 
         prev = curr
 
