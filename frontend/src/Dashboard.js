@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import MetricsChart from "./MetricsChart";
+import MetricsChart from "../MetricsChart";
 
 function Dashboard() {
     const [metrics, setMetrics] = useState([]);
