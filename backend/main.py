@@ -11,8 +11,41 @@ from metrics import computeBandwidth
 from database import addMetrics
 from alert_manager import pushAlert
 from app import pushRealtimeUpdate
+from anomaly import detectAnomaly
 
 devices = ["192.168.1.1", "192.168.1.2"]
+
+history = {}
+
+
+def pollDevice(device):
+    prev = get_interfaces_bytes()
+
+    while True:
+        time.sleep(5)
+        curr = get_interfaces_bytes()
+
+        bandwidth = computeBandwidth(prev, curr, 5)
+
+        for ifIndex, (inRate, outRate) in bandwidth.items():
+
+            key = f"{device}-{ifIndex}"
+
+            if key not in history:
+                history[key] = []
+
+            history[key].append(inRate)
+
+            # Keep last 20 values
+            history[key] = history[key][-20:]
+
+            # 🚨 AI DETECTION
+            if detectAnomaly(history[key]):
+                pushAlert(
+                    "CRITICAL", f"Anomaly detected on {device} if {ifIndex}")
+
+        prev = curr
+        
 
 
 def pollDevice(device):
