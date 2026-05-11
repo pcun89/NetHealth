@@ -11,7 +11,7 @@ from metrics import computeBandwidth
 from database import addMetrics
 from alert_manager import pushAlert
 from app import pushRealtimeUpdate
-from anomaly import detectAnomaly
+from backend.anomaly import detectAnomaly
 
 devices = ["192.168.1.1", "192.168.1.2"]
 
