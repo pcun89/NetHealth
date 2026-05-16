@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/nethealth/static/js/main.1deb14f6.js",
+    "index.html": "/nethealth/index.html",
+    "main.1deb14f6.js.map": "/nethealth/static/js/main.1deb14f6.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.1deb14f6.js"
+  ]
+}
