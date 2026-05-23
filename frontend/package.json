@@ -2,7 +2,7 @@
   "name": "nethealth",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://pcun89.github.io/nethealth",
+  "homepage": "https://pcun89.github.io/NetHealth/",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
