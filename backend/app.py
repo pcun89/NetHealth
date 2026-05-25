@@ -8,53 +8,37 @@ from database import (
     recentMetrics
 )
 
+from main import pollLoop
+
+import threading
+
 app = Flask(__name__)
 
-# ✅ Enables frontend communication
 CORS(app)
 
-# ✅ Enables WebSockets
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(
+    app,
+    cors_allowed_origins="*"
+)
 
 
 @app.route("/")
 def home():
-    """
-    Home route
-
-    Time Complexity: O(1)
-    """
     return "NetHealth API Running"
 
 
 @app.route("/health")
 def health():
-    """
-    Health check
-
-    Time Complexity: O(1)
-    """
     return {"status": "healthy"}
 
 
 @app.route("/api/alerts")
 def alerts():
-    """
-    Returns alerts
-
-    Time Complexity: O(n)
-    Data Structure: List of dictionaries
-    """
     return jsonify(recentAlerts())
 
 
 @app.route("/api/metrics/<host>")
 def metrics(host):
-    """
-    Returns metrics for host
-
-    Time Complexity: O(n)
-    """
     return jsonify({
         "host": host,
         "metrics": recentMetrics(host)
@@ -62,17 +46,26 @@ def metrics(host):
 
 
 def pushRealtimeUpdate(data):
-    """
-    Broadcasts realtime updates
-
-    Time Complexity: O(n clients)
-    Data Structure: JSON
-    """
-    socketio.emit("metrics_update", data)
+    socketio.emit(
+        "metrics_update",
+        data
+    )
 
 
 if __name__ == "__main__":
+
+    # ✅ Initialize DB
     initDb()
 
-    # ✅ Cloud Run requires port 8080
-    socketio.run(app, host="0.0.0.0", port=8080)
+    # ✅ Start polling thread
+    threading.Thread(
+        target=pollLoop,
+        daemon=True
+    ).start()
+
+    # ✅ Start server
+    socketio.run(
+        app,
+        host="0.0.0.0",
+        port=8080
+    )

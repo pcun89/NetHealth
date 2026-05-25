@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/NetHealth/static/js/main.8ab03a69.js",
+    "main.js": "/NetHealth/static/js/main.a6d5630a.js",
     "index.html": "/NetHealth/index.html",
-    "main.8ab03a69.js.map": "/NetHealth/static/js/main.8ab03a69.js.map"
+    "main.a6d5630a.js.map": "/NetHealth/static/js/main.a6d5630a.js.map"
   },
   "entrypoints": [
-    "static/js/main.8ab03a69.js"
+    "static/js/main.a6d5630a.js"
   ]
 }
