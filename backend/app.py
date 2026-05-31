@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-from flask_socketio import SocketIO
+
+from socket_manager import socketio
 
 from database import (
     initDb,
@@ -16,10 +17,8 @@ app = Flask(__name__)
 
 CORS(app)
 
-socketio = SocketIO(
-    app,
-    cors_allowed_origins="*"
-)
+# ✅ Initialize socketio
+socketio.init_app(app)
 
 
 @app.route("/")
@@ -29,12 +28,16 @@ def home():
 
 @app.route("/health")
 def health():
-    return {"status": "healthy"}
+    return {
+        "status": "healthy"
+    }
 
 
 @app.route("/api/alerts")
 def alerts():
-    return jsonify(recentAlerts())
+    return jsonify(
+        recentAlerts()
+    )
 
 
 @app.route("/api/metrics/<host>")
@@ -45,25 +48,16 @@ def metrics(host):
     })
 
 
-def pushRealtimeUpdate(data):
-    socketio.emit(
-        "metrics_update",
-        data
-    )
-
-
 if __name__ == "__main__":
 
-    # ✅ Initialize DB
     initDb()
 
-    # ✅ Start polling thread
+    # ✅ Start polling engine
     threading.Thread(
         target=pollLoop,
         daemon=True
     ).start()
 
-    # ✅ Start server
     socketio.run(
         app,
         host="0.0.0.0",
