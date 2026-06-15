@@ -17,8 +17,14 @@ app = Flask(__name__)
 
 CORS(app)
 
-# ✅ Initialize socketio
 socketio.init_app(app)
+
+initDb()
+
+threading.Thread(
+    target=pollLoop,
+    daemon=True
+).start()
 
 
 @app.route("/")
@@ -28,16 +34,12 @@ def home():
 
 @app.route("/health")
 def health():
-    return {
-        "status": "healthy"
-    }
+    return {"status": "healthy"}
 
 
 @app.route("/api/alerts")
 def alerts():
-    return jsonify(
-        recentAlerts()
-    )
+    return jsonify(recentAlerts())
 
 
 @app.route("/api/metrics/<host>")
@@ -49,15 +51,6 @@ def metrics(host):
 
 
 if __name__ == "__main__":
-
-    initDb()
-
-    # ✅ Start polling engine
-    threading.Thread(
-        target=pollLoop,
-        daemon=True
-    ).start()
-
     socketio.run(
         app,
         host="0.0.0.0",
