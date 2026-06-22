@@ -11,15 +11,17 @@ from anomaly import detectAnomaly
 
 from socket_manager import socketio
 
-devices = [
+DEVICES = [
     "192.168.1.1",
     "192.168.1.2"
 ]
+
 
 history = {}
 
 
 def pollDevice(device):
+    print(f"Polling {device}")
 
     prev = get_interfaces_bytes()
 
@@ -85,15 +87,14 @@ def pollDevice(device):
 
 def pollLoop():
 
-    threads = []
+    while True:
 
-    for device in devices:
+        try:
 
-        t = threading.Thread(
-            target=pollDevice,
-            args=(device,)
-        )
+            for device in DEVICES:
+                pollDevice(device)
 
-        t.start()
+            time.sleep(5)
 
-        threads.append(t)
+        except Exception as e:
+            print("Polling Error:", e)
