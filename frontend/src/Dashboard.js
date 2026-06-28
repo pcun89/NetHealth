@@ -5,6 +5,57 @@ import MetricsChart from "./MetricsChart";
 const socket = io(
     "https://nethealth-936022305209.us-central1.run.app"
 );
+const API_URL = "http://localhost:8080";
+
+const startMonitoring = async () => {
+    try {
+        const response = await fetch(`${API_URL}/api/start-monitoring`, {
+            method: "POST",
+        });
+
+        const data = await response.json();
+
+        alert(data.message);
+    } catch (err) {
+        console.error(err);
+    }
+};
+<button
+    className="start-btn"
+    onClick={startMonitoring}
+>
+    ▶ Start Monitoring
+</button>
+const stopMonitoring = async () => {
+    const response = await fetch(`${API_URL}/api/stop-monitoring`, {
+        method: "POST",
+    });
+
+    const data = await response.json();
+
+    alert(data.message);
+};
+<button
+    className="stop-btn"
+    onClick={stopMonitoring}
+>
+    ■ Stop Monitoring
+</button>
+const [running, setRunning] = useState(false);
+
+useEffect(() => {
+    fetchStatus();
+}, []);
+
+const fetchStatus = async () => {
+    const response = await fetch(`${API_URL}/api/status`);
+    const data = await response.json();
+    setRunning(data.running);
+};
+<h3>
+    Status: {running ? "🟢 Running" : "🔴 Stopped"}
+</h3>
+
 
 function Dashboard() {
     /*
